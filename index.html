@@ -1,0 +1,217 @@
+<!doctype html>
+<html>
+<head>
+  <title>OCI Serverless Aka Functions Demo</title>
+  <style>
+    #products {
+      font-family: Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #products td, #products th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    #products tr:nth-child(even){background-color: #f2f2f2;}
+
+    #products tr:hover {background-color: #ddd;}
+
+    #products th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #04AA6D;
+      color: white;
+    }
+
+    .form-container {
+      max-width: 300px;
+      padding: 10px;
+      background-color: white;
+    }
+
+    /* Full-width input fields */
+    .form-container input[type=text], .form-container input[type=password] {
+      width: 100%;
+      padding: 15px;
+      margin: 5px 0 22px 0;
+      border: none;
+      background: #f1f1f1;
+    }
+
+    .button {
+      background-color: #04AA6D; /* Green */
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-top:10px;
+    }        
+
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+  /* Modal Content */
+  .modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 40%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+  }
+
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+  }
+
+  @keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+  }
+
+  /* The Close Button */
+  .close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .modal-header {
+    padding: 2px 16px;
+    background-color: #04AA6D;
+    color: white;
+  }
+
+  .modal-body {padding: 2px 16px;}  
+
+    .container {
+      height: 50px;
+      position: relative;
+    }
+
+    .center {
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }    
+  </style>	
+  <script type="text/javascript">
+    
+    function openPopup() {
+      var prodPopup = document.getElementById("addProd");
+      document.getElementById("prdName").value = '';
+      document.getElementById("prdCnt").value = '';
+      prodPopup.style.display = "block";
+    }
+
+    function closePopup() {
+      var prodPopup = document.getElementById("addProd");
+      prodPopup.style.display = "none";
+    }  
+
+    const loadProductTable = () => {
+      var xhttp = new XMLHttpRequest();
+      var htmlText = '';
+      
+      xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            var productData = JSON.parse(this.responseText);
+            var products = productData.products;
+            htmlText += '<table  id="products" > <tr> <th>Product Name</th> <th>Count</th> </tr>';
+            if(products){
+              for(let i=0; i < products.length; i++){
+                htmlText += '<tr><td>' + products[i].name + '</td> <td>' + products[i].count + '</td> </tr>';
+              }
+            }
+            htmlText += '</table>';
+          }
+          document.querySelector("#app").innerHTML =htmlText;
+        };
+        xhttp.open("GET", "https://0f4337fd-469f-461d-ad41-355b0e6994dd.mock.pstmn.io/getProducts", true);
+        xhttp.send();            
+    };
+
+    const addProduct = (productName, count) => {
+
+    };
+
+    const deleteProduct = (productName) => {
+
+    };
+
+    const updateProduct = (productName, count) => {
+
+    };    
+
+    document.addEventListener("DOMContentLoaded", loadProductTable);  
+  </script>	
+</head>
+<body>
+  <div id="addProd" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add New Product</h3>
+      </div>
+      <div class="modal-body">
+        <div id="prodForm" class="form-container">
+          <label for="prodName"><b>Product Name</b></label>
+          <input type="text" placeholder="Enter Product Name" name="prodName" id="prdName">
+      
+          <label for="prodCount"><b>Product Count</b></label>
+          <input type="text" placeholder="Enter Product Count" name="prodCount" id="prdCnt">
+      
+          <button type="submit" class="button">OK</button>
+          <button type="submit" class="button" onclick="closePopup()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>  
+  <!--<nav class="nav" >
+    <a href="/" class="nav__link" data-link>Home</a>
+    <a href="/productList" class="nav__link" data-link>Product List</a>
+    <a href="/productOps" class="nav__link" data-link>Product Operations</a>
+  </nav>
+  <script async crossorigin="anonymous" type="module" src="script/index.js" ></script>-->
+  <div id="app"></div>	
+  <div class="container">
+    <div class="center">
+      <button class="button" onclick="openPopup()">Add New Product</button>
+    </div>
+  </div>
+</body>
+</html>

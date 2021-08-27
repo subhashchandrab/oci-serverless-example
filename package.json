@@ -1,0 +1,12 @@
+{
+	"name": "serverless-demo",
+    "version": "1.0.0",
+	"description": "OCI Serverless Provisioned Concurrency Demo",
+	"main": "func.js",
+	"author": "",
+	"license": "Apache-2.0",
+	"dependencies": {
+		"@fnproject/fdk": ">=0.0.19",
+		"oracledb": "^4.2.0"
+	}
+}
