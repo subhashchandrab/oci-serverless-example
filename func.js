@@ -20,9 +20,7 @@ async function getProducts(){
   //console.log("Verify that the required environment variables are set as declared in dbconfig.js",process.env.CONNECT_STRING, process.env.DB_USER);
   try {
     connection =  await oracledb.getConnection(dbconfig);
-    result =  await connection.execute(
-    `select name, count from test_user.products;`
-    );
+    result =  await connection.execute(`SELECT name, count FROM test_user.products`);
    
     for(let results in result.rows){
       const [name,count] = result.rows[results];
