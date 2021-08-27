@@ -5,29 +5,27 @@ const dbconfig = require('./dbconfig.js');
 fdk.handle(async function(input){
 
   
-  console.log('\nThis is a OCI Functions for demonstrating provisioned concurrency..')
+  console.log('This is a OCI Functions for demonstrating provisioned concurrency.')
   console.log(input);
   if (input) {
 	//TODO to implement product specific operation like create,delete and update
     return '{ input received : ' + input + '}' 
   }else{
-    return getdb()
+    return getProducts()
   }
 })
 
-async function getdb(){
+async function getProducts(){
   let result = '';
-  //console.log(process.env.CONNECT_STRING, process.env.DB_USER);
+  //console.log("Verify that the required environment variables are set as declared in dbconfig.js",process.env.CONNECT_STRING, process.env.DB_USER);
   try {
     connection =  await oracledb.getConnection(dbconfig);
     result =  await connection.execute(
-    `SELECT brand, title, description
-     FROM test_user.products`
+    `select name, count from test_user.products;`
     );
    
     for(let results in result.rows){
-      const [brand,title,description] = result.rows[results];
-      //console.log(brand,title,description);
+      const [name,count] = result.rows[results];
     }
   } catch (err) {
       console.error(err);
@@ -42,4 +40,3 @@ async function getdb(){
     }
   return result
 }
-
