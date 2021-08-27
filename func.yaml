@@ -1,5 +1,5 @@
 schema_version: 20180708
-name: demo-nodejs
+name: serverless-demo
 version: 0.0.23
 runtime: node
 entrypoint: node func.js
