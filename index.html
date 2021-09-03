@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
   <title>OCI Serverless Aka Functions Demo</title>
   <style>
@@ -9,14 +10,19 @@
       width: 100%;
     }
 
-    #products td, #products th {
+    #products td,
+    #products th {
       border: 1px solid #ddd;
       padding: 8px;
     }
 
-    #products tr:nth-child(even){background-color: #f2f2f2;}
+    #products tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
 
-    #products tr:hover {background-color: #ddd;}
+    #products tr:hover {
+      background-color: #ddd;
+    }
 
     #products th {
       padding-top: 12px;
@@ -26,6 +32,10 @@
       color: white;
     }
 
+    #products tr.clicked {
+      background: #b2dacb;
+    }
+
     .form-container {
       max-width: 300px;
       padding: 10px;
@@ -33,7 +43,8 @@
     }
 
     /* Full-width input fields */
-    .form-container input[type=text], .form-container input[type=password] {
+    .form-container input[type=text],
+    .form-container input[type=password] {
       width: 100%;
       padding: 15px;
       margin: 5px 0 22px 0;
@@ -42,7 +53,8 @@
     }
 
     .button {
-      background-color: #04AA6D; /* Green */
+      background-color: #04AA6D;
+      /* Green */
       border: none;
       color: white;
       padding: 15px 32px;
@@ -50,168 +62,414 @@
       text-decoration: none;
       display: inline-block;
       font-size: 16px;
-      margin-top:10px;
-    }        
-
-    .modal {
-      display: none; /* Hidden by default */
-      position: fixed; /* Stay in place */
-      z-index: 1; /* Sit on top */
-      padding-top: 100px; /* Location of the box */
-      left: 0;
-      top: 0;
-      width: 100%; /* Full width */
-      height: 100%; /* Full height */
-      overflow: auto; /* Enable scroll if needed */
-      background-color: rgb(0,0,0); /* Fallback color */
-      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      margin-top: 10px;
     }
 
-  /* Modal Content */
-  .modal-content {
-    position: relative;
-    background-color: #fefefe;
-    margin: auto;
-    padding: 0;
-    border: 1px solid #888;
-    width: 40%;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    -webkit-animation-name: animatetop;
-    -webkit-animation-duration: 0.4s;
-    animation-name: animatetop;
-    animation-duration: 0.4s
-  }
+    .modal {
+      display: none;
+      /* Hidden by default */
+      position: fixed;
+      /* Stay in place */
+      z-index: 1;
+      /* Sit on top */
+      padding-top: 100px;
+      /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%;
+      /* Full width */
+      height: 100%;
+      /* Full height */
+      overflow: auto;
+      /* Enable scroll if needed */
+      background-color: rgb(0, 0, 0);
+      /* Fallback color */
+      background-color: rgba(0, 0, 0, 0);   
+      
+    }
 
-  /* Add Animation */
-  @-webkit-keyframes animatetop {
-    from {top:-300px; opacity:0} 
-    to {top:0; opacity:1}
-  }
+    .transDiv {
+      background: transparent
+    }
 
-  @keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:0; opacity:1}
-  }
+    /* Modal Content */
+    .modal-content {
+      position: relative;
+      background-color: #fefefe;
+      margin: auto;
+      padding: 0;
+      border: 1px solid #888;
+      width: 40%;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      -webkit-animation-name: animatetop;
+      -webkit-animation-duration: 0.4s;
+      animation-name: animatetop;
+      animation-duration: 0.4s;
+    }
 
-  /* The Close Button */
-  .close {
-    color: white;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
+    /* Add Animation */
+    @-webkit-keyframes animatetop {
+      from {
+        top: -300px;
+        opacity: 0
+      }
 
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-  }
+      to {
+        top: 0;
+        opacity: 1
+      }
+    }
 
-  .modal-header {
-    padding: 2px 16px;
-    background-color: #04AA6D;
-    color: white;
-  }
+    @keyframes animatetop {
+      from {
+        top: -300px;
+        opacity: 0
+      }
 
-  .modal-body {padding: 2px 16px;}  
+      to {
+        top: 0;
+        opacity: 1
+      }
+    }
+
+    .modal-header {
+      padding: 2px 16px;
+      background-color: #04AA6D;
+      color: white;
+    }
+
+    .modal-body {
+      padding: 2px 16px;
+    }
 
     .container {
       height: 50px;
       position: relative;
     }
 
+    .right {
+      float: right;
+      width: 300px;
+      border: 3px solid #73AD21;
+      padding: 10px;
+    }
+
     .center {
-      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 3px solid green; 
+    }    
+
+    .footer-container {
+      display: flex;
+      height: 30px;
+    }
+
+    /* Center the loader */
+    #loader {
       position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 1;
+      width: 120px;
+      height: 120px;
+      margin: -76px 0 0 -76px;
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      -webkit-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+    }
+
+    #loadingText {
+      position: absolute;
+      display: inline-block;
       top: 50%;
       left: 50%;
-      -ms-transform: translate(-50%, -50%);
       transform: translate(-50%, -50%);
+      font-size:20px;
+    }
+
+    .loader-modal-content {
+      position: relative;
+      margin: auto;
+      padding: 0;
+      width: 40%;
+      box-shadow: none;
+      -webkit-animation-name: animatetop;
+      -webkit-animation-duration: 0.4s;
+      animation-name: animatetop;
+      animation-duration: 0.4s;
+      background: rgba(0,0,0,0);
     }    
-  </style>	
+
+    @-webkit-keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+      }
+
+      100% {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    #loading {
+      font-size: 18px;
+      text-align: center;
+      font-family: 'Open Sans', sans-serif;
+      color: rgba(0, 0, 0, 0.9);
+    }
+
+    .loaderContainer {
+      /*margin-top: 11em;*/
+      position: relative;
+      margin:50px;
+      width: 120px;
+      height: 120px; 
+      background: rgba(0,0,0,0);     
+    }
+  </style>
   <script type="text/javascript">
-    
-    function openPopup() {
+    var apiEndpointUrl = "https://*******.apigateway.*****.oci.customer-oci.com";//Replace the API Gateway endpoint URL here
+    var selectedRow = null;
+
+    const initializeRowSelection = () => {
+      var tables = document.getElementsByTagName('table');
+      for (var i = 0; i < tables.length; i++) {
+        var trs = tables[i].getElementsByTagName('tr');
+        for (var j = 0; j < trs.length; j++) {
+          if (trs[j].parentNode.nodeName === 'TBODY') {
+            trs[j].onmousedown = function () {
+              //
+              // Toggle the selected state of this row
+              // 
+
+              // 'clicked' color is set in tablelist.css.
+              if (this.className !== 'clicked') {
+                // Clear previous selection
+                if (selectedRow !== null) {
+                  selectedRow.className = '';
+                }
+
+                // Mark this row as selected
+                this.className = 'clicked';
+                selectedRow = this;
+              }
+              else {
+                this.className = '';
+                selectedRow = null;
+              }
+
+              return true
+            }
+          }
+        }
+      }
+    }
+
+    function showAddProductPopup() {
+      document.getElementById("prodName").value = '';
+      document.getElementById("prodName").disabled = false;
+      document.getElementById("prodCount").value = '';   
+      document.getElementById("prodHeader").innerHTML = '<h3>Add New Product</h3>';
       var prodPopup = document.getElementById("addProd");
-      document.getElementById("prdName").value = '';
-      document.getElementById("prdCnt").value = '';
       prodPopup.style.display = "block";
     }
 
-    function closePopup() {
+    function showUpdateProductPopup() {
+      if(!selectedRow){
+        alert("Please select a product to be updated!");
+        return;
+      } 
+      var selectedProductName = selectedRow.children[0].textContent;
+      var selectedProductCount =  selectedRow.children[1].textContent;            
+      document.getElementById("prodHeader").innerHTML = '<h3>Update Product: ' + selectedProductName + '</h3>';
+      document.getElementById("prodName").value = selectedProductName;
+      document.getElementById("prodName").disabled = true;
+      document.getElementById("prodCount").value = selectedProductCount;      
+      var prodPopup = document.getElementById("addProd");
+      prodPopup.style.display = "block";
+    }    
+
+    function closeProductPopup() {
       var prodPopup = document.getElementById("addProd");
       prodPopup.style.display = "none";
-    }  
+    }
 
-    const loadProductTable = () => {
+    function handleProductPopup() {
+        if( document.getElementById("prodName").disabled){
+          updateProduct();
+        }
+        else {
+          addProduct();
+        }
+    }
+
+    const fetchProducts = () => {
+      document.getElementById("loading").style.display = "block";
+      document.querySelector("#loadingText").innerHTML = "<b>Fetching Products... </b>";
       var xhttp = new XMLHttpRequest();
       var htmlText = '';
-      
-      xhttp.onreadystatechange = function() {
-          if (this.readyState == 4 && this.status == 200) {
-            var productData = JSON.parse(this.responseText);
-            var products = productData.products;
-            htmlText += '<table  id="products" > <tr> <th>Product Name</th> <th>Count</th> </tr>';
-            if(products){
-              for(let i=0; i < products.length; i++){
-                htmlText += '<tr><td>' + products[i].name + '</td> <td>' + products[i].count + '</td> </tr>';
-              }
+      var t0 = new Date().getTime();
+      xhttp.onload = function () {
+
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+          var resultJson = JSON.parse(xhttp.responseText);
+          var products = resultJson.results;
+          htmlText += '<table  id="products" > <tr> <th>Product Name</th> <th>Count</th> </tr>';
+          if (products) {
+            for (let i = 0; i < products.length; i++) {
+              htmlText += '<tr><td>' + products[i].name + '</td> <td>' + products[i].count + '</td> </tr>';
             }
-            htmlText += '</table>';
           }
-          document.querySelector("#app").innerHTML =htmlText;
-        };
-        xhttp.open("GET", "https://0f4337fd-469f-461d-ad41-355b0e6994dd.mock.pstmn.io/getProducts", true);
-        xhttp.send();            
+          htmlText += '</table>';
+        }
+        document.querySelector("#app").innerHTML = htmlText;
+        selectedRow = null;
+        initializeRowSelection();
+        var t1 = new Date().getTime();
+        document.getElementById("loading").style.display = "none";
+        var exeTimeMsg = "Last operation(Fetch products) completed in " + (t1 - t0) + " milliseconds.";
+        var footerMsgHtml = '<p><b>' + exeTimeMsg + '</b></p>';
+        document.querySelector("#footerText").innerHTML = footerMsgHtml;
+        //document.getElementById("footer").style.display="block";
+      };
+      xhttp.open("GET", apiEndpointUrl+"/getProducts", false);
+      xhttp.send();
     };
 
-    const addProduct = (productName, count) => {
-
+    const addProduct = () => {
+      closeProductPopup();
+      var t0 = new Date().getTime();
+      document.getElementById("loading").style.display = "block";
+      document.querySelector("#loadingText").innerHTML = "<p><b> Adding Product... </b></p>";      
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          //Upon succesful addition of product, reload the products table
+          fetchProducts();
+          var t1 = new Date().getTime();
+          var exeTimeMsg = "Last operation(Add product) completed in " + (t1 - t0) + " milliseconds.";
+        
+          var footerMsgHtml = '<p><b>' + exeTimeMsg + '</b></p>';
+          document.querySelector("#footerText").innerHTML = footerMsgHtml;          
+        }
+      }
+      var productName = document.getElementById("prodName").value;
+      var productCount = document.getElementById("prodCount").value;
+      console.log("Product Name: " + productName + ", Product Count:" + productCount);       
+      var restUrl = apiEndpointUrl+"/addProduct?name=" + productName + "&count=" + productCount;
+      xhttp.open("POST", restUrl, false);
+      xhttp.send();
     };
 
-    const deleteProduct = (productName) => {
+    const updateProduct = () => {
+      closeProductPopup();
+      var t0 = new Date().getTime();
+      document.getElementById("loading").style.display = "block";
+      document.querySelector("#loadingText").innerHTML = "<p><b> Updating Product...  </b></p>";      
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          //Upon succesful addition of product, reload the products table
+          fetchProducts();
+          var t1 = new Date().getTime();
+          var exeTimeMsg = "Last operation(Update product) completed in " + (t1 - t0) + " milliseconds.";
+          var footerMsgHtml = '<p><b>' + exeTimeMsg + '</b></p>';
+          document.querySelector("#footerText").innerHTML = footerMsgHtml;          
+        }
 
+       
+      }
+      var productName = document.getElementById("prodName").value;
+      var productCount = document.getElementById("prodCount").value;
+      console.log("Product Name: " + productName + ", Product Count:" + productCount);       
+      var restUrl = apiEndpointUrl+"/updateProduct?name=" + productName + "&count=" + productCount;
+      xhttp.open("POST", restUrl, false);
+      xhttp.send();
     };
 
-    const updateProduct = (productName, count) => {
+    const deleteProduct = () => {
+      if(!selectedRow){
+        alert("Please select a product to be deleted!");
+        return;
+      }
+      var t0 = new Date().getTime(); 
+      
+      document.getElementById("loading").style.display = "block";
+      document.querySelector("#loadingText").innerHTML = "<p><b> Deleting Product... </b></p>";       
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          //Upon succesful deletion of product, reload the products table
+          fetchProducts();
+          var t1 = new Date().getTime();
+          var exeTimeMsg = "Last operation(Delete product) completed in " + (t1 - t0) + " milliseconds.";
+          
+          var footerMsgHtml = '<p><b>' + exeTimeMsg + '</b></p>';
+          document.querySelector("#footerText").innerHTML = footerMsgHtml;          
+        }
+        
+      }          
+      var selectedProductName = selectedRow.firstChild.textContent;
+      var restUrl = apiEndpointUrl+"/deleteProduct?name=" + selectedProductName;
+      xhttp.open("POST", restUrl, false);
+      xhttp.send();      
+    };
 
-    };    
-
-    document.addEventListener("DOMContentLoaded", loadProductTable);  
-  </script>	
+    document.addEventListener("DOMContentLoaded", fetchProducts);
+  </script>
 </head>
+
 <body>
   <div id="addProd" class="modal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h3>Add New Product</h3>
+      <div class="modal-header" id="prodHeader">
+        
       </div>
       <div class="modal-body">
         <div id="prodForm" class="form-container">
-          <label for="prodName"><b>Product Name</b></label>
-          <input type="text" placeholder="Enter Product Name" name="prodName" id="prdName">
-      
-          <label for="prodCount"><b>Product Count</b></label>
-          <input type="text" placeholder="Enter Product Count" name="prodCount" id="prdCnt">
-      
-          <button type="submit" class="button">OK</button>
-          <button type="submit" class="button" onclick="closePopup()">Cancel</button>
+          <label for="pName"><b>Product Name</b></label>
+          <input type="text" placeholder="Enter Product Name" name="pName" id="prodName">
+
+          <label for="pCount"><b>Product Count</b></label>
+          <input type="text" placeholder="Enter Product Count" name="pCount" id="prodCount">
+
+          <button type="submit" class="button" onclick="handleProductPopup()">OK</button>
+          <button type="submit" class="button" onclick="closeProductPopup()">Cancel</button>
         </div>
       </div>
     </div>
-  </div>  
-  <!--<nav class="nav" >
-    <a href="/" class="nav__link" data-link>Home</a>
-    <a href="/productList" class="nav__link" data-link>Product List</a>
-    <a href="/productOps" class="nav__link" data-link>Product Operations</a>
-  </nav>
-  <script async crossorigin="anonymous" type="module" src="script/index.js" ></script>-->
-  <div id="app"></div>	
-  <div class="container">
-    <div class="center">
-      <button class="button" onclick="openPopup()">Add New Product</button>
+  </div>
+  <div id="loading" class="modal transDiv">
+    <div class="loader-modal-content">
+      <div class="loaderContainer">
+        <div id="loader"></div>
+        <div id="loadingText" ></div>
+      </div>
     </div>
   </div>
+  <div id="headerDiv" class="center"><h2>OCI Serverless Demo - Product Store </h2></div>
+  <div id="app"></div>
+  <div class="container">
+    <button class="button" onclick="fetchProducts()">Fetch Products</button>
+    <button class="button" onclick="showAddProductPopup()">Add New Product</button>
+    <button class="button" onclick="showUpdateProductPopup()">Update Product</button>
+    <button class="button" onclick="deleteProduct()">Delete Product</button>
+  </div>
+
+  <div id="footerText"></div>
 </body>
+
 </html>
