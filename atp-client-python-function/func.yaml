@@ -1,0 +1,6 @@
+schema_version: 20180708
+name: product-store-operations
+version: 0.0.10
+runtime: python
+entrypoint: /python/bin/fdk /function/func.py handler
+memory: 256
