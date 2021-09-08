@@ -1,0 +1,170 @@
+{
+    "loggingPolicies": {
+        "accessLog": null,
+        "executionLog": {
+            "isEnabled": true,
+            "logLevel": "INFO"
+        }
+    },
+    "requestPolicies": {
+        "authentication": {
+            "functionId": "ocid1.fnfunc.oc1.....",
+            "isAnonymousAccessAllowed": false,
+            "tokenHeader": "token",
+            "tokenQueryParam": null,
+            "type": "CUSTOM_AUTHENTICATION"
+        },
+        "cors": {
+            "allowedHeaders": [
+                "*"
+            ],
+            "allowedMethods": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE"
+            ],
+            "allowedOrigins": [
+                "*"
+            ],
+            "exposedHeaders": [],
+            "isAllowCredentialsEnabled": false,
+            "maxAgeInSeconds": 0
+        },
+        "rateLimiting": null
+    },
+    "routes": [
+        {
+            "backend": {
+                "functionId": "ocid1.fnfunc.oc1.phx.aaaa.....",
+                "type": "ORACLE_FUNCTIONS_BACKEND"
+            },
+            "loggingPolicies": {
+                "accessLog": null,
+                "executionLog": {
+                    "isEnabled": null,
+                    "logLevel": null
+                }
+            },
+            "methods": [
+                "GET"
+            ],
+            "path": "\/getProducts",
+            "requestPolicies": {
+                "authorization": {
+                    "type": "AUTHENTICATION_ONLY"
+                },
+                "bodyValidation": null,
+                "cors": null,
+                "headerTransformations": null,
+                "headerValidations": null,
+                "queryParameterTransformations": null,
+                "queryParameterValidations": null,
+                "responseCacheLookup": null
+            },
+            "responsePolicies": {
+                "headerTransformations": null,
+                "responseCacheStore": null
+            }
+        },
+        {
+            "backend": {
+                "functionId": "ocid1.fnfunc.oc1.phx.aaaa....",
+                "type": "ORACLE_FUNCTIONS_BACKEND"
+            },
+            "loggingPolicies": {
+                "accessLog": null,
+                "executionLog": {
+                    "isEnabled": null,
+                    "logLevel": null
+                }
+            },
+            "methods": [
+                "POST"
+            ],
+            "path": "\/addProduct",
+            "requestPolicies": {
+                "authorization": {
+                    "type": "AUTHENTICATION_ONLY"
+                },
+                "bodyValidation": null,
+                "cors": null,
+                "headerTransformations": null,
+                "headerValidations": null,
+                "queryParameterTransformations": null,
+                "queryParameterValidations": null,
+                "responseCacheLookup": null
+            },
+            "responsePolicies": {
+                "headerTransformations": null,
+                "responseCacheStore": null
+            }
+        },
+        {
+            "backend": {
+                "functionId": "ocid1.fnfunc.oc1.phx.aaaa....",
+                "type": "ORACLE_FUNCTIONS_BACKEND"
+            },
+            "loggingPolicies": {
+                "accessLog": null,
+                "executionLog": {
+                    "isEnabled": null,
+                    "logLevel": null
+                }
+            },
+            "methods": [
+                "POST"
+            ],
+            "path": "\/updateProduct",
+            "requestPolicies": {
+                "authorization": {
+                    "type": "AUTHENTICATION_ONLY"
+                },
+                "bodyValidation": null,
+                "cors": null,
+                "headerTransformations": null,
+                "headerValidations": null,
+                "queryParameterTransformations": null,
+                "queryParameterValidations": null,
+                "responseCacheLookup": null
+            },
+            "responsePolicies": {
+                "headerTransformations": null,
+                "responseCacheStore": null
+            }
+        },
+        {
+            "backend": {
+                "functionId": "ocid1.fnfunc.oc1.phx.aaaa....",
+                "type": "ORACLE_FUNCTIONS_BACKEND"
+            },
+            "loggingPolicies": {
+                "accessLog": null,
+                "executionLog": {
+                    "isEnabled": null,
+                    "logLevel": null
+                }
+            },
+            "methods": [
+                "POST"
+            ],
+            "path": "\/deleteProduct",
+            "requestPolicies": {
+                "authorization": {
+                    "type": "AUTHENTICATION_ONLY"
+                },
+                "bodyValidation": null,
+                "cors": null,
+                "headerTransformations": null,
+                "headerValidations": null,
+                "queryParameterTransformations": null,
+                "queryParameterValidations": null,
+                "responseCacheLookup": null
+            },
+            "responsePolicies": {
+                "headerTransformations": null,
+                "responseCacheStore": null
+            }
+        }
+    ]
+}
