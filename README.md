@@ -16,6 +16,12 @@ We have a static web page based on plain html with all required javascript/css e
 - Delete an existing product from the store
 
 
+We need to setup the following OCI components
 
+## ATP Database
+
+* Create an [Autonomous Transaction Processing (ATP) Database](https://docs.oracle.com/en-us/iaas/Content/Database/Tasks/adbcreating.htm)
+* Click on OCI Console -> Autonomous Database -> DB Connection and download the wallet.
+* Access the ATP Service Console -> SQL Developer Web and perform the following actions:
 
 
