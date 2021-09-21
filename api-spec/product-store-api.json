@@ -1,0 +1,312 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "This is a demo API setup for product store operations.",
+    "version": "1.0",
+    "title": "Product Store Operations"
+  },
+  "servers": [
+    {
+      "url": "https://h3v66vqcvwfg6jpeywdj6cak4y.apigateway.us-phoenix-1.oci.customer-oci.com/"
+    }
+  ],
+  "paths": {
+    "/getProducts": {
+      "get": {
+        "summary": "Returns list of all the available products",
+        "operationId": "getProducts",
+        "tags": [
+          "products"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all the available products in the store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Products"
+                },
+                "example": [
+                  {
+                    "name": "Pen",
+                    "count": 10
+                  },
+                  {
+                    "name": "Book",
+                    "count": 20
+                  },
+                  {
+                    "name": "Pencil",
+                    "count": 30
+                  }
+                ]
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/addProduct": {
+      "post": {
+        "summary": "Adds the product with given name and count to the store",
+        "operationId": "addProduct",
+        "tags": [
+          "products"
+        ],
+        "parameters": [
+          {
+            "name": "proudctName",
+            "in": "query",
+            "description": "Name of the product",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Pen"
+          },
+          {
+            "name": "productCount",
+            "in": "query",
+            "description": "Count of the product",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The product item with given details will be added to store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "The given product added to the store"
+              }
+            }
+          },
+          "301": {
+            "description": "The given product already exists in the store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deleteProduct": {
+      "post": {
+        "summary": "Deletes the product with given name from the store",
+        "operationId": "deleteProduct",
+        "tags": [
+          "products"
+        ],
+        "parameters": [
+          {
+            "name": "proudctName",
+            "in": "query",
+            "description": "Name of the product",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Pen"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If the product with given name exists in the store, it will be deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "The given product is deleted from the store"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateProduct": {
+      "post": {
+        "summary": "Updates the count of the given product in the store",
+        "operationId": "updateProduct",
+        "tags": [
+          "products"
+        ],
+        "parameters": [
+          {
+            "name": "proudctName",
+            "in": "query",
+            "description": "Name of the product",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Pen"
+          },
+          {
+            "name": "productCount",
+            "in": "query",
+            "description": "Count of the product",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If the product with given name exists in the store, it will be deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "The product is updated"
+              }
+            }
+          },
+          "302": {
+            "description": "Invalid product count",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "required": [
+          "name",
+          "count"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Products": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Product"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
