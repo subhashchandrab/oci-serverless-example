@@ -21,8 +21,8 @@ We need to setup the following OCI components
 ## ATP Database
 
 * Create an [Autonomous Transaction Processing (ATP) Database](https://docs.oracle.com/en-us/iaas/Content/Database/Tasks/adbcreating.htm)
-* Click on OCI Console -> Autonomous Database -> DB Connection and download the wallet.
-* Access the ATP Service Console -> SQL Developer Web and perform the following actions:
+* Access the ATP Service Console. In the Home page, make a note of the ORDS base URL by clicking on Copy URL under RESTful Services and SODA section.
+* Click on Database Actions to open the SQL Developer Web. Clik on SQL to open the SQL worksheet and execute the following queries
 
 ```
 /* Create a user 'test_user' for connecting to the ATP from the application */
@@ -56,6 +56,14 @@ INSERT INTO test_user.products VALUES ('Eraser',150);
 select name, count from test_user.products;
 ```
 
-* Go to Administration -> DATABASE USERS. Select the TEST_USER and click on Enable REST
+* From Global Action Menu, select Administration -> Database Users. Select the TEST_USER and click on Enable REST
  ![rest-enable-atp-user](https://user-images.githubusercontent.com/22868753/134461040-203a4326-8fea-4deb-ad0a-8b564c72a12f.jpg)
+ 
+## OCI Functions
+* Upgrade to the [latest fn CLI](https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionsupgradingfncli.htm)
+* Create a [Functions Application](https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionsquickstartcloudshell.htm) with a name 'serverless-demo'
+* Add the following configuration parameters to the application
+![function-app-configuration](https://user-images.githubusercontent.com/22868753/134468231-20cf7eb1-004b-488f-934a-afff9f9987c6.jpg)
+
+Here the ORDS_BASE_URL should be the URL we copied in the steps mentioned in previous section on ATP Database
 
