@@ -21,6 +21,7 @@ We need to setup the following OCI components
 ## ATP Database
 
 * Create an [Autonomous Transaction Processing (ATP) Database](https://docs.oracle.com/en-us/iaas/Content/Database/Tasks/adbcreating.htm)
+* From the ATP details page, click on DB Connection -> Instance Wallet -> Download Wallet. Extract the contents to any folder. You need to refer the tnsnames.ora file in the  next section
 * Access the ATP Service Console. In the Home page, make a note of the ORDS base URL by clicking on Copy URL under RESTful Services and SODA section.
 * Click on Database Actions to open the SQL Developer Web. Clik on SQL to open the SQL worksheet and execute the following queries
 
@@ -65,5 +66,31 @@ select name, count from test_user.products;
 * Add the following configuration parameters to the application
 ![function-app-configuration](https://user-images.githubusercontent.com/22868753/134468231-20cf7eb1-004b-488f-934a-afff9f9987c6.jpg)
 
-Here the ORDS_BASE_URL should be the URL we copied in the steps mentioned in previous section on ATP Database
+1. ORDS_BASE_URL : The URL we copied in the steps mentioned in previous section on ATP Database. 
+2. CONNECT_STRING : Connect string name will be available in tnsnames.ora file(Can be found in the downloaded wallet folder of the ATP). Use the name of the format ATPName_TP
+3. DB_USER & DB_PASSWORD : Use the values as shown in the above screen shot as we have used the same credentials in the SQL script we executed in the previous section.
+
+* Clone the github repository:
+```
+$git clone https://github.com/subhashchandrab/oci-serverless-example.git 
+$cd atp-client-python-function
+```
+
+* Setup your environment for pushing the function image to the OCI repository. Please refer [OCI Fn quickstart](https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionsquickstartlocalhost.htm) for help.
+
+* After logging in to the OCI registry, execute the following command to verify that the function application created above(serverless-demo) is listed
+```
+$fn list apps
+NAME		ID	
+serverless-demo	ocid1.fnapp.oc1.phx.aaaa.....
+```
+
+* Deploy the function into the application
+```
+$fn -v deploy --app serverless-demo
+```
+
+
+
+
 
