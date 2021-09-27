@@ -90,7 +90,52 @@ serverless-demo	ocid1.fnapp.oc1.phx.aaaa.....
 $fn -v deploy --app serverless-demo
 ```
 
+* From OCI Console, click Developer Services -> Functions -> Application -> serverless-demo
+## OCI API Gateway
+* Create an [API Gateway](https://docs.oracle.com/en-us/iaas/Content/APIGateway/Tasks/apigatewaycreatinggateway.htm)
+* Create a deployment named **product-store** with CORS configuration as shown below
+![create-apigw-basicinfo](https://user-images.githubusercontent.com/22868753/134850884-f0a5817d-5233-4d5d-ba91-5eb445f10c58.jpg)
+
+![apigw-cors-config](https://user-images.githubusercontent.com/22868753/134850923-44975138-7cf2-49b9-a0fd-194a39c999ce.jpg)
+
+* Click Next and create a Route for the path **/getProducts** as shown below. Type should be selected as **Oracle Functions** and the application and function should be selected by referring to the function deployed in earlier section.
+![function-app-configuration](https://user-images.githubusercontent.com/22868753/134851345-03976609-c89a-412b-b437-64bfdb27517d.jpg)
+
+* Similar to the above step, create the following routes
+|      PATH      | METHODS | TYPE             | APPLICATION     | FUNCTION NAME            |
+|:--------------:|---------|------------------|-----------------|--------------------------|
+| /addProduct    | PUT     | Oracle Functions | serverless-demo | product-store-operations |
+| /updateProduct | PUT     | Oracle Functions | serverless-demo | product-store-operations |
+| /deleteProduct | PUT     | Oracle Functions | serverless-demo | product-store-operations |
+
+* Click Next and click Create
+
+* Go to Deployment Details page and copy the Endpoint URL.
+![apigw-dep-endpoint-url](https://user-images.githubusercontent.com/22868753/134852732-e188257d-a01d-4cfe-9d51-096c07d0afcb.jpg)
+
+## Setup HTML UI
+* Go to the git cloned repository above.
+```
+$cd front-end/html
+$vi index.html
+```
+* Locate the following line and update the apiEndpointUrl with the URL copied above(from API Gateway Deployment Details page)
+```
+var apiEndpointUrl = "https://*******.apigateway.*****.oci.customer-oci.com";//Replace the API Gateway endpoint URL here
+```
+* Save the file
+
+## Object Storage setup to access HTML UI
+* Create a standard type [object storage bucket](https://docs.oracle.com/en-us/iaas/Content/Object/Tasks/managingbuckets.htm) with all default settings
+* Upload the index.html(Updated index.html from previous section) file into the bucket.
+* Create a Pre-Authenticated Request for the uploaded file and note down the URL 
+![create-objectstorage-par](https://user-images.githubusercontent.com/22868753/134857990-7edbdb01-521b-411b-8886-76d284084c8d.jpg)
 
 
+## Update the API Gateway deployment
+* Go to the Deployment Details page for the API deployment created earlier. Add the following route and update the URL with the URL copied in the previous step
+![apigw-index-route](https://user-images.githubusercontent.com/22868753/134857524-6a02fa78-52f8-41a4-9bfb-2e452fc8816f.jpg)
 
+## Access the UI
+* Copy the API Gateway deployment endpoint URL and paste it in a browser. You should see the following operations. Perform the operations like Add Product, Delete Product and Update Product
 
