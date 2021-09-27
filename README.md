@@ -15,8 +15,9 @@ We have a static web page based on plain html with all required javascript/css e
 - Update count of an existing product
 - Delete an existing product from the store
 
+When this UI is accessed, it invokes the OCI API Gateway endpoint URL which will invoke the Oracle Function. This Oracle Function will access the ATP database to perform all the operations exposed in the UI.
 
-We need to setup the following OCI components
+We need to setup the following OCI components. 
 
 ## ATP Database
 
@@ -102,6 +103,7 @@ $fn -v deploy --app serverless-demo
 ![function-app-configuration](https://user-images.githubusercontent.com/22868753/134851345-03976609-c89a-412b-b437-64bfdb27517d.jpg)
 
 * Similar to the above step, create the following routes
+
 |      PATH      | METHODS | TYPE             | APPLICATION     | FUNCTION NAME            |
 |:--------------:|---------|------------------|-----------------|--------------------------|
 | /addProduct    | PUT     | Oracle Functions | serverless-demo | product-store-operations |
@@ -138,4 +140,7 @@ var apiEndpointUrl = "https://*******.apigateway.*****.oci.customer-oci.com";//R
 
 ## Access the UI
 * Copy the API Gateway deployment endpoint URL and paste it in a browser. You should see the following operations. Perform the operations like Add Product, Delete Product and Update Product
+![product-store-html-ui](https://user-images.githubusercontent.com/22868753/134859179-4dffefd2-09b8-4c97-979a-ba27914b82a5.jpg)
 
+## Conclusion
+We verified how a web application can access API Gateway endpoint which has Oracle Function (which accesses ATP) as the backend.
