@@ -1,0 +1,8 @@
+schema_version: 20180708
+name: product-store-operations-java
+version: 0.0.8
+runtime: java
+build_image: fnproject/fn-java-fdk-build:jdk11-1.0.134
+run_image: fnproject/fn-java-fdk:jre11-1.0.134
+cmd: com.oci.fn.example.ATPORDSClient::handleRequest
+timeout: 120
