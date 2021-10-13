@@ -1,5 +1,6 @@
 package com.oci.fn.example;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -7,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
@@ -33,6 +35,13 @@ import org.json.JSONObject;
 import com.fnproject.fn.api.FnConfiguration;
 import com.fnproject.fn.api.RuntimeContext;
 import com.fnproject.fn.api.httpgateway.HTTPGatewayContext;
+import com.oracle.bmc.auth.BasicAuthenticationDetailsProvider;
+import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
+import com.oracle.bmc.auth.ResourcePrincipalAuthenticationDetailsProvider;
+import com.oracle.bmc.secrets.SecretsClient;
+import com.oracle.bmc.secrets.model.Base64SecretBundleContentDetails;
+import com.oracle.bmc.secrets.requests.GetSecretBundleRequest;
+import com.oracle.bmc.secrets.responses.GetSecretBundleResponse;
 
 public class ATPORDSClient {
 
@@ -40,12 +49,52 @@ public class ATPORDSClient {
 	private static String DB_USER;
 	private static String DB_PASSWORD;
 
+	private SecretsClient secretsClient;
+
 	@FnConfiguration
 	public void setUp(RuntimeContext ctx) throws Exception {
-		ORDS_BASE_URL = ctx.getConfigurationByKey("ORDS_BASE_URL").get();
-		DB_USER = ctx.getConfigurationByKey("DB_USER").get();
-		DB_PASSWORD = ctx.getConfigurationByKey("DB_PASSWORD").get();
+		try {
+			ORDS_BASE_URL = ctx.getConfigurationByKey("ORDS_BASE_URL").get();
+			String dbUserSecretOcid = ctx.getConfigurationByKey("DB_USER_SECRET_OCID").get();
+			String dbPasswordSecretOcid = ctx.getConfigurationByKey("DB_PASSWORD_SECRET_OCID").get();
 
+			initializeOciSecretsClient();
+
+			DB_USER = readSecretValue(dbUserSecretOcid);
+			DB_PASSWORD = readSecretValue(dbPasswordSecretOcid);
+			System.out.println("Loaded secrets: "+ DB_USER+ ", "+ DB_PASSWORD);
+		} catch (Exception e) {
+			System.out.println("Error occurred while loading the function configuration parameters");
+			e.printStackTrace();
+		}
+
+	}
+
+	private String readSecretValue(String dbUserSecretOcid) {
+		GetSecretBundleRequest getSecretBundleRequest = GetSecretBundleRequest.builder().secretId(dbUserSecretOcid)
+				.stage(GetSecretBundleRequest.Stage.Current).build();
+		GetSecretBundleResponse getSecretBundleResponse = secretsClient.getSecretBundle(getSecretBundleRequest);
+		Base64SecretBundleContentDetails base64SecretBundleContentDetails = (Base64SecretBundleContentDetails) getSecretBundleResponse
+				.getSecretBundle().getSecretBundleContent();
+		byte[] secretValueDecoded = Base64.decodeBase64(base64SecretBundleContentDetails.getContent());
+		return new String(secretValueDecoded);
+	}
+
+	private void initializeOciSecretsClient() {
+		String version = System.getenv("OCI_RESOURCE_PRINCIPAL_VERSION");
+		BasicAuthenticationDetailsProvider provider = null;
+		if (version != null) {
+			provider = ResourcePrincipalAuthenticationDetailsProvider.builder().build();
+			System.out.println("Using the resource principal for OCI authentication");
+		} else {
+			try {
+				provider = new ConfigFileAuthenticationDetailsProvider("~/.oci/config", "DEFAULT");
+				System.out.println("Using the config profile for OCI authentication");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		secretsClient = new SecretsClient(provider);
 	}
 
 	public static class ProductItem {
@@ -185,6 +234,5 @@ public class ATPORDSClient {
 
 		return sqlQuery;
 	}
-
 
 }
