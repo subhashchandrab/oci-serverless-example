@@ -62,7 +62,7 @@ public class ATPORDSClient {
 
 			DB_USER = readSecretValue(dbUserSecretOcid);
 			DB_PASSWORD = readSecretValue(dbPasswordSecretOcid);
-			System.out.println("Loaded secrets: "+ DB_USER+ ", "+ DB_PASSWORD);
+			//System.out.println("Loaded secrets: "+ DB_USER+ ", "+ DB_PASSWORD);
 		} catch (Exception e) {
 			System.out.println("Error occurred while loading the function configuration parameters");
 			e.printStackTrace();
