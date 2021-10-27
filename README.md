@@ -119,7 +119,8 @@ $fn -v deploy --app serverless-demo
 ![apigw-cors-config](https://user-images.githubusercontent.com/22868753/134850923-44975138-7cf2-49b9-a0fd-194a39c999ce.jpg)
 
 * Click Next and create a Route for the path **/getProducts** as shown below. Type should be selected as **Oracle Functions** and the application and function should be selected by referring to the function deployed in earlier section.
-![function-app-configuration](https://user-images.githubusercontent.com/22868753/134851345-03976609-c89a-412b-b437-64bfdb27517d.jpg)
+![apigw-route-config](https://user-images.githubusercontent.com/22868753/139066051-a93962ff-3296-4bf6-9132-cad09557a296.jpg)
+
 
 * Similar to the above step, create the following routes
 
