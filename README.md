@@ -81,14 +81,15 @@ select name, count from test_user.products;
 
 ## OCI Functions
 * Upgrade to the [latest fn CLI](https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionsupgradingfncli.htm)
-* Create a [Functions Application](https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionsquickstartcloudshell.htm) with a name 'serverless-demo'
+* Setup your environment for [Functions](https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionsquickstartcloudshell.htm). Make sure all the setup instructions followed as mentioned
+* Create an application with a name 'serverless-demo'
 * Add the following configuration parameters to the application
 
 1. ORDS_BASE_URL : The URL we copied in the steps mentioned in the section on ATP Database. 
 2. DB_USER_SECRET_OCID : The OCID of the ATP DB User ID secret created in the previous section
 3. DB_PASSWORD_SECRET_OCID : The OCID of the ATP DB password secret created in the previous section
 
-* Clone the github repository:
+* In the cloud shell, clone the github repository:
 ```
 $git clone https://github.com/subhashchandrab/oci-serverless-example.git 
 $cd atp-client-java-function
@@ -161,4 +162,4 @@ var apiEndpointUrl = "https://*******.apigateway.*****.oci.customer-oci.com";//R
 ![product-store-html-ui](https://user-images.githubusercontent.com/22868753/134859179-4dffefd2-09b8-4c97-979a-ba27914b82a5.jpg)
 
 ## Conclusion
-We verified how a web application can access API Gateway endpoint which has Oracle Function (which accesses ATP) as the backend.
+We verified how we can build serverless applications on OCI using the API Gateway, Oracle Functions and ATP database.
