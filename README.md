@@ -135,13 +135,26 @@ $fn -v deploy --app serverless-demo
 * Go to Deployment Details page and copy the Endpoint URL.
 ![apigw-dep-endpoint-url](https://user-images.githubusercontent.com/22868753/134852732-e188257d-a01d-4cfe-9d51-096c07d0afcb.jpg)
 
+* Setup the IAM policy for API GW to use OCI functions
+```
+ALLOW any-user to use functions-family in compartment <compartment-name> where ALL {request.principal.type= 'ApiGateway', request.resource.compartment.id = 'ocid1.compartment.oc1.....'}
+```
+
+* API Gateway communicates on port 443, which is not open by default. You have to add a new stateful ingress rule for the regional subnet in which the API Gateway is located to allow traffic on port 443. VCN -> Subnet -> Default Security List -> Add Ingress Rule and add the rule as shown below
+```
+    Source Type: CIDR
+    Source CIDR: 0.0.0.0/0
+    IP Protocol: TCP
+    Source Port Range: All
+    Destination Port Range: 443
+```
 ## Setup HTML UI
 * Go to the git cloned repository above.
 ```
 $cd front-end/html
 $vi index.html
 ```
-* Locate the following line and update the apiEndpointUrl with the URL copied above(from API Gateway Deployment Details page)
+* Locate the following line and update the apiEndpointUrl with the URL copied in the previous section(from API Gateway Deployment Details page)
 ```
 var apiEndpointUrl = "https://*******.apigateway.*****.oci.customer-oci.com";//Replace the API Gateway endpoint URL here
 ```
