@@ -126,9 +126,9 @@ $fn -v deploy --app serverless-demo
 
 |      PATH      | METHODS | TYPE             | APPLICATION     | FUNCTION NAME            |
 |:--------------:|---------|------------------|-----------------|--------------------------|
-| /addProduct    | PUT     | Oracle Functions | serverless-demo | product-store-operations |
-| /updateProduct | PUT     | Oracle Functions | serverless-demo | product-store-operations |
-| /deleteProduct | PUT     | Oracle Functions | serverless-demo | product-store-operations |
+| /addProduct    | POST    | Oracle Functions | serverless-demo | product-store-operations |
+| /updateProduct | POST    | Oracle Functions | serverless-demo | product-store-operations |
+| /deleteProduct | POST    | Oracle Functions | serverless-demo | product-store-operations |
 
 * Click Next and click Create
 
