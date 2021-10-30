@@ -4,6 +4,8 @@
 # like Fetch/Create/Update/Delete for the products table
 
 import io
+import oci
+import base64
 import json
 import requests
 from urllib.parse import urlparse, parse_qs  
@@ -37,7 +39,7 @@ def ords_run_sql(ordsbaseurl, dbschema, dbpwd, sqlQuery):
     return result
 
 # get the sql query based on the operation extracted from the request URL parameters
-def getSqlQuery(requestUrlString, queryString, dbUser):
+def get_sql_query(requestUrlString, queryString, dbUser):
     tableName = dbUser + ".products"
     sqlQuery = "select name, count from" + tableName
     if "/getProducts" in requestUrlString:
@@ -55,10 +57,20 @@ def getSqlQuery(requestUrlString, queryString, dbUser):
         sqlQuery = "delete from "+ tableName + " where name = '"+product_name+"'" 
     return sqlQuery
 
+def read_secret_value(secret_id):
+    print("Reading vaule of secret_id: ", secret_id)
+    resource_principal_signer = oci.auth.signers.get_resource_principals_signer()
+    secret_client = oci.secrets.SecretsClient(config={}, signer=resource_principal_signer)
+    response = secret_client.get_secret_bundle(secret_id)
+
+    base64_Secret_content = response.data.secret_bundle_content.content
+    base64_secret_bytes = base64_Secret_content.encode('ascii')
+    base64_message_bytes = base64.b64decode(base64_secret_bytes)
+    secret_content = base64_message_bytes.decode('ascii')
+
+    return secret_content
+
 def handler(ctx, data: io.BytesIO=None):
-    # retrieving the request headers
-    #headers = ctx.Headers()
-    #print("Headers:",  json.dumps(headers)) 
 
     # retrieving the request body, e.g. {"key1":"value"}
     try:
@@ -72,33 +84,34 @@ def handler(ctx, data: io.BytesIO=None):
         raise    
 
     # retrieving the request URL, e.g. "/v1/http-info"
-    requesturl = ctx.RequestURL()
-    requestUrlString = json.dumps(requesturl)
-    print("Request URL: ", requestUrlString, flush=True)
+    request_url = ctx.RequestURL()
+    request_url_string = json.dumps(request_url)
+    print("Request URL: ", request_url_string, flush=True)
     
     # retrieving query string from the request URL, e.g. {"param1":["value"]}
-    parsed_url = urlparse(requesturl)
+    parsed_url = urlparse(request_url)
     query_string = parse_qs(parsed_url.query)
     print("URL Query string: ", json.dumps(query_string), flush=True)    
 
 
-    # read the database properties from the function configuration 
-    ordsbaseurl = dbuser = dbpwdcypher = dbpwd = ""
+    # read the database credentials from the function configuration 
+    ordsbaseurl = dbuser = dbpwd = dbuser_ocid = dbpwd_ocid = ""
     try:
         cfg = ctx.Config()
-        ordsbaseurl = cfg["ORDS_BASE_URL"]
-        dbuser = cfg["DB_USER"]
-        dbpwdcypher = cfg["DB_PASSWORD"]
-        dbpwd = dbpwdcypher  # The decryption of the db password using OCI KMS would have to be done, however it is addressed here
+        ords_base_url = cfg["ORDS_BASE_URL"]
+        dbuser_ocid = cfg["DB_USER_SECRET_OCID"]
+        dbpwd_ocid = cfg["DB_PASSWORD_SECRET_OCID"]
     except Exception:
         print('Missing function parameters: ords-base-url, db-user and db-pwd', flush=True)
         raise
-
     
-    sqlQueryString = getSqlQuery(requestUrlString, query_string, dbuser)
-    print("SQL query string:", sqlQueryString)
+    # Read the db credential secrets from the OCI 
+    dbuser = read_secret_value(dbuser_ocid)
+    dbpwd = read_secret_value(dbpwd_ocid)
+    sql_query_string = get_sql_query(request_url_string, query_string, dbuser)
 
-    result = ords_run_sql(ordsbaseurl, dbuser, dbpwd, sqlQueryString)
+
+    result = ords_run_sql(ords_base_url, dbuser, dbpwd, sql_query_string)
 
     return response.Response(
         ctx, 
