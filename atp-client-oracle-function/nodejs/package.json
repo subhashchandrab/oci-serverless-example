@@ -1,12 +1,13 @@
 {
-	"name": "serverless-demo",
-    "version": "1.0.0",
-	"description": "OCI Serverless Provisioned Concurrency Demo",
+	"name": "oci-serverless-nodejs",
+        "version": "1.0.0",
+	"description": "nodejs function to access ATP",
 	"main": "func.js",
 	"author": "",
 	"license": "Apache-2.0",
 	"dependencies": {
-		"@fnproject/fdk": ">=0.0.19",
-		"oracledb": "^4.2.0"
+		"@fnproject/fdk": ">=0.0.30",
+		"axios": "^0.24.0",
+		"oci-sdk": "^2.6.0"		
 	}
 }
