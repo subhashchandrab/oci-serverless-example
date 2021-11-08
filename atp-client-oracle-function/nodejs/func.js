@@ -1,40 +1,112 @@
 const fdk=require('@fnproject/fdk');
-const oracledb = require('oracledb');
-const dbconfig = require('./dbconfig.js');
+const common = require('oci-common');
+const axios = require('axios');
+const secrets = require('oci-secrets');
+const url = require('url');
 
-fdk.handle(async function(input){
+const readSecret = async (secretOcid) => {
+  var secretContent = "";
+  const provider = await common.ResourcePrincipalAuthenticationDetailsProvider.builder();
+  const secretsClient = await new secrets.SecretsClient({authenticationDetailsProvider:provider});
+  const getSecretBundleRequest = {
+      secretId: secretOcid,
+      stage: secrets.requests.GetSecretBundleByNameRequest.Stage.Current
+    };
 
+    const secretBundleResponse = await secretsClient.getSecretBundle(
+      getSecretBundleRequest
+    ); 
+    secretContent = secretBundleResponse.secretBundle.secretBundleContent.content;
+    return Buffer.from(secretContent, 'base64').toString('ascii');
+};
+
+const loadConfiguration = async (ctx) => {
+  let fnConfig = {};
+  fnConfig['ordsBaseUrl'] = ctx.config["ORDS_BASE_URL"];
+  var dbUserOcid = ctx.config["DB_USER_SECRET_OCID"];
+  var dbPwdOcid = ctx.config["DB_PASSWORD_SECRET_OCID"];
   
-  console.log('This is a OCI Functions for demonstrating provisioned concurrency.')
-  console.log(input);
-  if (input) {
-	//TODO to implement product specific operation like create,delete and update
-    return '{ input received : ' + input + '}' 
-  }else{
-    return getProducts()
-  }
-})
 
-async function getProducts(){
-  let result = '';
-  //console.log("Verify that the required environment variables are set as declared in dbconfig.js",process.env.CONNECT_STRING, process.env.DB_USER);
-  try {
-    connection =  await oracledb.getConnection(dbconfig);
-    result =  await connection.execute(`SELECT name, count FROM test_user.products`);
-   
-    for(let results in result.rows){
-      const [name,count] = result.rows[results];
-    }
-  } catch (err) {
-      console.error(err);
-    } finally {
-      if (connection) {
-          try {
-            await connection.close();
-          } catch (err) {
-              console.error(err);
-          }
-      }
-    }
-  return result
+  fnConfig['dbUser']  = await readSecret(dbUserOcid);
+  fnConfig['dbPwd'] = await readSecret(dbPwdOcid);
+  return fnConfig;
+};
+
+const getSqlQuery = (fnConfig, ctx) => {
+  let httpCtx = ctx.httpGateway;
+  var requestUrlString = httpCtx.requestURL;
+  console.log("Request URL" , httpCtx.requestURL);
+  var reqUrl = url.parse(requestUrlString,true);
+  var path = reqUrl.pathname;
+  var queryParams = reqUrl.query;
+  let tableName = fnConfig['dbUser'] + ".products";
+  let sqlQuery = "select name, count from" + tableName;
+  if (path.startsWith("/getProducts")){
+    sqlQuery = "select name, count from " + tableName;
+  }
+  else if (path.startsWith("/addProduct")) {
+    product_name = queryParams['name'];
+    product_count = queryParams['count'];
+    sqlQuery = "insert into "+ tableName + " values ('" + product_name +"' , "+ product_count + ")";
+  }
+  else if (path.startsWith("/updateProduct")) {
+      product_name = queryParams['name'];
+      product_count = queryParams['count'];;
+      sqlQuery = "update "+ tableName +" set count=" + product_count + " where name = '"+product_name+"'";
+  }
+  else if (path.startsWith("/deleteProduct")) {
+      product_name = queryParams['name'];
+      sqlQuery = "delete from "+ tableName + " where name = '"+product_name+"'" ;
+  }
+  return sqlQuery; 
 }
+
+const invokeOrds = async (fnConfig, sqlQuery) => {
+  var ordsBaseUrl = fnConfig['ordsBaseUrl'];
+  var dbUser = fnConfig['dbUser'];
+  var dbPwd = fnConfig['dbPwd'];
+  console.log("Invoking the ords API.. "+ ordsBaseUrl + dbUser + '/_/sql');
+  let result = {};
+  let res = await axios({
+    method: 'post',
+    url: ordsBaseUrl + dbUser + '/_/sql',
+    auth: {
+        username: dbUser,
+        password: dbPwd
+    },
+    headers: {
+        'Content-Type': 'application/sql',
+    },          
+    data: sqlQuery
+
+  });
+
+  var resultItem = res.data.items[0];
+  result["sql_statement"] = resultItem["statementText"];
+  if( "errorDetails" in resultItem ){
+    result["error"] = resultItem["errorDetails"];
+  }
+  if( "response" in resultItem ){
+    result["response"] = resultItem["response"];
+  }   
+  if( "resultSet" in resultItem ){
+    result["results"] = resultItem["resultSet"]["items"];
+    result["count"] = resultItem["resultSet"]["count"];
+  }
+  console.log(`statusCode: ${res.status}`);
+ 
+   return result
+}
+
+const handleFunction = async (input, ctx) => {
+  console.log('input: ' + input)
+  let fnConfig = await loadConfiguration(ctx);
+  let sqlQuery = getSqlQuery(fnConfig, ctx);
+  let resultJson = await invokeOrds(fnConfig, sqlQuery);
+  ctx.responseContentType = 'application/json';
+  var jsonResultStr = JSON.stringify(resultJson);
+  // console.log("Return result: " + jsonResultStr);
+  return resultJson;
+}
+
+fdk.handle(handleFunction);
