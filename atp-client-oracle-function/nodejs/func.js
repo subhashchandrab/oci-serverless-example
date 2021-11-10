@@ -33,14 +33,23 @@ const loadConfiguration = async (ctx) => {
 };
 
 const getSqlQuery = (fnConfig, ctx) => {
-  let httpCtx = ctx.httpGateway;
-  var requestUrlString = httpCtx.requestURL;
-  console.log("Request URL" , httpCtx.requestURL);
-  var reqUrl = url.parse(requestUrlString,true);
-  var path = reqUrl.pathname;
-  var queryParams = reqUrl.query;
   let tableName = fnConfig['dbUser'] + ".products";
-  let sqlQuery = "select name, count from" + tableName;
+  let sqlQuery = "select name, count from " + tableName;
+  let path = '';
+  let httpCtx = ctx.httpGateway;
+  let queryParams = {};
+  if(httpCtx){
+    let requestUrlString = httpCtx.requestURL;
+    console.log("Request URL" , httpCtx.requestURL);
+    if(requestUrlString){
+      let reqUrl = url.parse(requestUrlString,true);
+      path = reqUrl.pathname;
+      queryParams = reqUrl.query;
+    }
+    else{
+      console.log("Request URL not available. Will use /getProducts as the default path.");
+    }
+  }
   if (path.startsWith("/getProducts")){
     sqlQuery = "select name, count from " + tableName;
   }
