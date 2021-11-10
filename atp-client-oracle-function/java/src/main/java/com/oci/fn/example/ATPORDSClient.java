@@ -62,7 +62,7 @@ public class ATPORDSClient {
 
 			DB_USER = readSecretValue(dbUserSecretOcid);
 			DB_PASSWORD = readSecretValue(dbPasswordSecretOcid);
-			//System.out.println("Loaded secrets: "+ DB_USER+ ", "+ DB_PASSWORD);
+//			System.out.println("Loaded secrets: "+ DB_USER+ ", "+ DB_PASSWORD);
 		} catch (Exception e) {
 			System.out.println("Error occurred while loading the function configuration parameters");
 			e.printStackTrace();
@@ -82,6 +82,7 @@ public class ATPORDSClient {
 
 	private void initializeOciSecretsClient() {
 		String version = System.getenv("OCI_RESOURCE_PRINCIPAL_VERSION");
+		System.out.println("OCI_RESOURCE_PRINCIPAL_VERSION" + version);
 		BasicAuthenticationDetailsProvider provider = null;
 		if (version != null) {
 			provider = ResourcePrincipalAuthenticationDetailsProvider.builder().build();
@@ -135,16 +136,24 @@ public class ATPORDSClient {
 	public RestApiResult handleRequest(HTTPGatewayContext hctx) throws Exception {
 		String requestUrl = hctx.getRequestURL();
 		System.out.println("Request URL: " + requestUrl);
-		try {
-			List<NameValuePair> queryParams = URLEncodedUtils.parse(new URI(requestUrl), Charset.forName("UTF-8"));
-			String sqlQuery = getSqlQueryString(requestUrl, queryParams);
-			System.out.println("SQL query to be executed: " + sqlQuery);
-			return invokeOrdsUrl(sqlQuery);
-		} catch (MalformedURLException e) {
-			System.out.print("Error occurred while parsing the request URL");
-			e.printStackTrace();
-			throw e;
+		String sqlQuery = null;
+		if(requestUrl != null && requestUrl.trim().length() > 0){
+			try {
+				List<NameValuePair> queryParams = URLEncodedUtils.parse(new URI(requestUrl), Charset.forName("UTF-8"));
+				sqlQuery = getSqlQueryString(requestUrl, queryParams);
+				System.out.println("SQL query to be executed: " + sqlQuery);
+			} catch (Exception e) {
+				System.out.print("Error occurred while parsing the request URL");
+				e.printStackTrace();
+				throw e;
+			}
 		}
+		else{
+
+			sqlQuery = getSqlQueryString("", null);
+		}
+		return invokeOrdsUrl(sqlQuery);
+
 	}
 
 	private RestApiResult invokeOrdsUrl(String sqlQuery) throws Exception {
@@ -207,7 +216,9 @@ public class ATPORDSClient {
 
 	private String getSqlQueryString(String requestUrlPath, List<NameValuePair> queryParams) {
 		String tableName = DB_USER + ".products";
-		String sqlQuery = null;
+		//When there is no http url information avaialable, it means the function is directly invoked(Not via API Gateway
+		//and we return the table data by default by using the below select query	
+		String sqlQuery = "select name, count from " + tableName;
 		String productName = null;
 		String productCount = null;
 		if (queryParams != null) {
