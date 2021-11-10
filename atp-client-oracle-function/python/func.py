@@ -41,7 +41,7 @@ def ords_run_sql(ordsbaseurl, dbschema, dbpwd, sqlQuery):
 # get the sql query based on the operation extracted from the request URL parameters
 def get_sql_query(requestUrlString, queryString, dbUser):
     tableName = dbUser + ".products"
-    sqlQuery = "select name, count from" + tableName
+    sqlQuery = "select name, count from " + tableName
     if "/getProducts" in requestUrlString:
         sqlQuery = "select name, count from " + tableName
     elif "/addProduct" in requestUrlString:
